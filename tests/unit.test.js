@@ -77,10 +77,10 @@ describe('Yale to Fale replacement logic', () => {
     
     const modifiedHtml = $.html();
     
-    // Content should remain the same
+    // Content should have Yale replaced with Fale
     expect(modifiedHtml).toContain('<title>Test Page</title>');
     expect(modifiedHtml).toContain('<h1>Hello World</h1>');
-    expect(modifiedHtml).toContain('<p>This is a test page with no Yale references.</p>');
+    expect(modifiedHtml).toContain('<p>This is a test page with no Fale references.</p>');
   });
 
   test('should handle case-insensitive replacements', () => {
@@ -90,11 +90,18 @@ describe('Yale to Fale replacement logic', () => {
     
     const $ = cheerio.load(mixedCaseHtml);
     
+    // Case-preserving replacement function
+    function replaceYalePreservingCase(text) {
+      return text.replace(/YALE/g, 'FALE')
+                 .replace(/Yale/g, 'Fale')
+                 .replace(/yale/g, 'fale');
+    }
+    
     $('body *').contents().filter(function() {
       return this.nodeType === 3;
     }).each(function() {
       const text = $(this).text();
-      const newText = text.replace(/Yale/gi, 'Fale');
+      const newText = replaceYalePreservingCase(text);
       if (text !== newText) {
         $(this).replaceWith(newText);
       }
